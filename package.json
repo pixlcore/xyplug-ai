@@ -1,0 +1,37 @@
+{
+	"name": "xyplug-ai",
+	"version": "1.0.0",
+	"description": "An AI prompt plugin for the xyOps workflow automation system.",
+	"author": "Joseph Huckaby <jhuckaby@pixlcore.com>",
+	"homepage": "https://github.com/pixlcore/xyplug-ai",
+	"license": "MIT",
+	"type": "module",
+	"bin": {
+		"xyplug-ai": "index.js"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/pixlcore/xyplug-ai"
+	},
+	"bugs": {
+		"url": "https://github.com/pixlcore/xyplug-ai/issues"
+	},
+	"keywords": [
+		"xyops",
+		"ai",
+		"prompt",
+		"llm"
+	],
+	"dependencies": {
+		"ai": "^6.0.27",
+		"@ai-sdk/anthropic": "^3.0.9",
+		"@ai-sdk/cohere": "^3.0.4",
+		"@ai-sdk/deepseek": "^2.0.4",
+		"@ai-sdk/google": "^3.0.6",
+		"@ai-sdk/groq": "^3.0.4",
+		"@ai-sdk/mistral": "^3.0.5",
+		"@ai-sdk/openai": "^3.0.7",
+		"@ai-sdk/openai-compatible": "^2.0.4",
+		"@ai-sdk/xai": "^3.0.13"
+	}
+}

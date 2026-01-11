@@ -1,0 +1,118 @@
+{
+	"type": "xypdf",
+	"description": "xyOps Portable Data Object",
+	"version": "1.0",
+	"items": [
+		{
+			"type": "plugin",
+			"data": {
+				"id": "pmk95r61ujs3byazh",
+				"title": "AI Prompt",
+				"enabled": true,
+				"type": "event",
+				"command": "npx -y github:pixlcore/xyplug-ai#v1.0.0",
+				"script": "",
+				"kill": "parent",
+				"notes": "Send a text prompt to any AI provider and return the response data.",
+				"icon": "robot-outline",
+				"params": [
+					{
+						"id": "model",
+						"title": "AI Provider/Model",
+						"type": "text",
+						"caption": "Enter the AI provider and model name, separated by a slash.",
+						"locked": false,
+						"value": "openai/gpt-5.1",
+						"variant": "text",
+						"required": true
+					},
+					{
+						"id": "base_url",
+						"title": "AI Base URL",
+						"type": "text",
+						"caption": "If using a custom endpoint for AI inference (e.g. Ollama), enter the URL here.",
+						"locked": false,
+						"value": "",
+						"variant": "text",
+						"required": false
+					},
+					{
+						"id": "prompt",
+						"title": "Prompt",
+						"type": "textarea",
+						"caption": "Enter the prompt to send to the AI model.",
+						"locked": false,
+						"value": "",
+						"required": true
+					},
+					{
+						"id": "system_prompt",
+						"title": "System Prompt",
+						"type": "textarea",
+						"caption": "Optional system prompt to prepend to the request.",
+						"locked": false,
+						"value": "",
+						"required": false
+					},
+					{
+						"id": "temperature",
+						"title": "Temperature",
+						"type": "text",
+						"caption": "Controls randomness. Lower is more deterministic.",
+						"locked": false,
+						"value": 0.2,
+						"variant": "number",
+						"required": false
+					},
+					{
+						"id": "top_p",
+						"title": "Top P",
+						"type": "text",
+						"caption": "Optional nucleus sampling threshold.",
+						"locked": false,
+						"value": 1,
+						"variant": "number",
+						"required": false
+					},
+					{
+						"id": "max_tokens",
+						"title": "Max Tokens",
+						"type": "text",
+						"caption": "Maximum number of tokens to generate.",
+						"locked": false,
+						"value": 512,
+						"variant": "number",
+						"required": false
+					},
+					{
+						"id": "stop_sequences",
+						"title": "Stop Sequences",
+						"type": "text",
+						"caption": "Optional list of stop sequences (comma separated).",
+						"locked": false,
+						"value": "",
+						"required": false
+					},
+					{
+						"id": "timeout_ms",
+						"title": "Timeout (ms)",
+						"type": "text",
+						"caption": "Number of milliseconds to wait for the AI response.",
+						"locked": false,
+						"value": 60000,
+						"variant": "number",
+						"required": false
+					},
+					{
+						"id": "expect_json",
+						"title": "Expect JSON",
+						"type": "checkbox",
+						"caption": "Fail the job if the response is not valid JSON.",
+						"locked": false,
+						"value": false
+					}
+				]
+			}
+		}
+	]
+}
