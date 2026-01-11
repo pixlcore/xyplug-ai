@@ -11,6 +11,8 @@ import { createOpenAI } from "@ai-sdk/openai";
 import { createOpenAICompatible } from "@ai-sdk/openai-compatible";
 import { createXai } from "@ai-sdk/xai";
 
+globalThis.AI_SDK_LOG_WARNINGS = false;
+
 // Map provider names to their Vercel AI SDK factory functions.
 const PROVIDERS = {
 	anthropic: createAnthropic,
