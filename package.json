@@ -1,6 +1,6 @@
 {
 	"name": "xyplug-ai",
-	"version": "1.0.2",
+	"version": "1.0.3",
 	"description": "An AI prompt plugin for the xyOps workflow automation system.",
 	"author": "Joseph Huckaby <jhuckaby@pixlcore.com>",
 	"homepage": "https://github.com/pixlcore/xyplug-ai",

@@ -10,7 +10,7 @@
 				"title": "AI Prompt",
 				"enabled": true,
 				"type": "event",
-				"command": "npx -y github:pixlcore/xyplug-ai#v1.0.2",
+				"command": "npx -y github:pixlcore/xyplug-ai#v1.0.3",
 				"script": "",
 				"kill": "parent",
 				"notes": "Send a text prompt to any AI provider and return the response data.",
