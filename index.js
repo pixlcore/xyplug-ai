@@ -44,13 +44,12 @@ const OPTIONAL_KEY_PROVIDERS = new Set();
 
 // Emit a final XYWP message and exit.
 function writeExit(payload) {
-	process.stdout.write(`${JSON.stringify(payload)}\n`);
-	process.exit(0);
+	process.stdout.write(`${JSON.stringify(payload)}\n`, () => process.exit(0));
 }
 
 // Emit an error response and exit.
 function fail(code, description) {
-	writeExit({ xy: 1, code, description });
+	return writeExit({ xy: 1, code, description });
 }
 
 // Read and parse the job payload from STDIN.
@@ -58,12 +57,12 @@ async function readJob() {
 	const chunks = [];
 	for await (const chunk of process.stdin) chunks.push(chunk);
 	const raw = chunks.join("").trim();
-	if (!raw) fail("input", "No JSON input received on STDIN.");
+	if (!raw) return fail("input", "No JSON input received on STDIN.");
 	try {
 		return JSON.parse(raw);
 	}
 	catch (err) {
-		fail("input", `Failed to parse JSON input: ${err.message}`);
+		return fail("input", `Failed to parse JSON input: ${err.message}`);
 	}
 }
 
@@ -143,11 +142,11 @@ function buildProvider(provider, apiKey, baseURL) {
 	const job = await readJob();
 	const params = job.params || {};
 	const prompt = params.prompt || "";
-	if (!prompt.trim()) fail("params", "Required parameter 'prompt' was not provided.");
+	if (!prompt.trim()) return fail("params", "Required parameter 'prompt' was not provided.");
 
 	const baseURL = params.base_url ? String(params.base_url).trim() : "";
 	const modelRaw = String(params.model || "").trim();
-	if (!modelRaw) fail("params", "Required parameter 'model' was not provided.");
+	if (!modelRaw) return fail("params", "Required parameter 'model' was not provided.");
 
 	let providerName = "";
 	let modelName = "";
@@ -160,7 +159,7 @@ function buildProvider(provider, apiKey, baseURL) {
 	else {
 		const modelInfo = normalizeModel(modelRaw);
 		if (!modelInfo) {
-			fail("params", "Parameter 'model' must be in the form 'provider/model'.");
+			return fail("params", "Parameter 'model' must be in the form 'provider/model'.");
 		}
 		providerName = modelInfo.provider;
 		modelName = modelInfo.model;
@@ -169,18 +168,18 @@ function buildProvider(provider, apiKey, baseURL) {
 	const apiKey = resolveApiKey(providerName);
 
 	if (providerName === "local" && !baseURL) {
-		fail("params", "Parameter 'base_url' is required for provider 'local'.");
+		return fail("params", "Parameter 'base_url' is required for provider 'local'.");
 	}
 
 	if (!apiKey && !baseURL && !OPTIONAL_KEY_PROVIDERS.has(providerName)) {
 		const envName = PROVIDER_ENV[providerName] || "AI_API_KEY";
-		fail("env", `Missing API key. Set ${envName} or AI_API_KEY.`);
+		return fail("env", `Missing API key. Set ${envName} or AI_API_KEY.`);
 	}
 
 	const provider = buildProvider(providerName, apiKey, baseURL);
 	if (!provider) {
 		const supported = Object.keys(PROVIDERS).sort().join(", ");
-		fail("params", `Unsupported provider '${providerName}'. Supported providers: ${supported}.`);
+		return fail("params", `Unsupported provider '${providerName}'. Supported providers: ${supported}.`);
 	}
 
 	const model = provider(modelName);
@@ -220,7 +219,7 @@ function buildProvider(provider, apiKey, baseURL) {
 	// Optionally enforce JSON output from the model.
 	if (expectJson && !jsonResult.parsed) {
 		const detail = jsonResult.jsonText ? "Invalid JSON returned by model." : "No JSON returned by model.";
-		fail("json", detail);
+		return fail("json", detail);
 	}
 
 	// Return parsed JSON if available, otherwise return plain text.
@@ -229,5 +228,5 @@ function buildProvider(provider, apiKey, baseURL) {
 	
 })().catch((err) => {
 	// Catch-all handler for unexpected errors.
-	fail("error", err && err.message ? err.message : "Unknown error");
+	return fail("error", err && err.message ? err.message : "Unknown error");
 });
