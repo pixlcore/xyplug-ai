@@ -1,6 +1,7 @@
 {
 	"name": "xyplug-ai",
 	"version": "1.0.5",
+	"private": true,
 	"description": "An AI generation plugin for the xyOps workflow automation system.",
 	"author": "Joseph Huckaby <jhuckaby@pixlcore.com>",
 	"homepage": "https://github.com/pixlcore/xyplug-ai",
