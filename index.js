@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
-import { generateText } from "ai";
+import { writeFile } from "node:fs/promises";
+import { generateImage, generateText } from "ai";
 import { createAnthropic } from "@ai-sdk/anthropic";
 import { createCohere } from "@ai-sdk/cohere";
 import { createDeepSeek } from "@ai-sdk/deepseek";
@@ -127,26 +128,20 @@ function buildProvider(provider, apiKey, baseURL) {
 	if (baseURL) opts.baseURL = baseURL;
 
 	if (provider === "local") {
-		const instance = factory({
+		return factory({
 			...opts,
 			name: "local"
 		});
-		return (modelName) => instance.chatModel(modelName);
 	}
 
 	return factory(opts);
 }
 
-// Main execution flow.
-(async () => {
-	const job = await readJob();
-	const params = job.params || {};
-	const prompt = params.prompt || "";
-	if (!prompt.trim()) return fail("params", "Required parameter 'prompt' was not provided.");
-
+// Resolve provider, model name, and API key for both text and image requests.
+function resolveProviderDetails(params) {
 	const baseURL = params.base_url ? String(params.base_url).trim() : "";
 	const modelRaw = String(params.model || "").trim();
-	if (!modelRaw) return fail("params", "Required parameter 'model' was not provided.");
+	if (!modelRaw) fail("params", "Required parameter 'model' was not provided.");
 
 	let providerName = "";
 	let modelName = "";
@@ -159,7 +154,7 @@ function buildProvider(provider, apiKey, baseURL) {
 	else {
 		const modelInfo = normalizeModel(modelRaw);
 		if (!modelInfo) {
-			return fail("params", "Parameter 'model' must be in the form 'provider/model'.");
+			fail("params", "Parameter 'model' must be in the form 'provider/model'.");
 		}
 		providerName = modelInfo.provider;
 		modelName = modelInfo.model;
@@ -168,18 +163,102 @@ function buildProvider(provider, apiKey, baseURL) {
 	const apiKey = resolveApiKey(providerName);
 
 	if (providerName === "local" && !baseURL) {
-		return fail("params", "Parameter 'base_url' is required for provider 'local'.");
+		fail("params", "Parameter 'base_url' is required for provider 'local'.");
 	}
 
 	if (!apiKey && !baseURL && !OPTIONAL_KEY_PROVIDERS.has(providerName)) {
 		const envName = PROVIDER_ENV[providerName] || "AI_API_KEY";
-		return fail("env", `Missing API key. Set ${envName} or AI_API_KEY.`);
+		fail("env", `Missing API key. Set ${envName} or AI_API_KEY.`);
 	}
 
 	const provider = buildProvider(providerName, apiKey, baseURL);
 	if (!provider) {
 		const supported = Object.keys(PROVIDERS).sort().join(", ");
-		return fail("params", `Unsupported provider '${providerName}'. Supported providers: ${supported}.`);
+		fail("params", `Unsupported provider '${providerName}'. Supported providers: ${supported}.`);
+	}
+
+	return { provider, providerName, modelName, baseURL };
+}
+
+// Resolve the image model from a provider, if supported.
+function resolveImageModel(provider, modelName) {
+	if (provider && typeof provider.imageModel === "function") return provider.imageModel(modelName);
+	if (provider && typeof provider.image === "function") return provider.image(modelName);
+	return null;
+}
+
+// Map media types to file extensions for generated images.
+function resolveImageExtension(mediaType) {
+	const normalized = String(mediaType || "")
+		.toLowerCase()
+		.split(";")[0]
+		.trim();
+	const mapping = {
+		"image/png": "png",
+		"image/jpeg": "jpg",
+		"image/jpg": "jpg",
+		"image/webp": "webp"
+	};
+	return mapping[normalized] || "png";
+}
+
+// Main execution flow.
+(async () => {
+	const job = await readJob();
+	const params = job.params || {};
+	const tool = params.tool ? String(params.tool) : "text";
+	const prompt = params.prompt || "";
+	if (!prompt.trim()) return fail("params", "Required parameter 'prompt' was not provided.");
+
+	const { provider, modelName } = resolveProviderDetails(params);
+
+	if (tool === "image") {
+		const imageModel = resolveImageModel(provider, modelName);
+		if (!imageModel) return fail("params", "Selected provider does not support image generation.");
+
+		const countRaw = parseNumber(params.count, 1);
+		const count = Number.isFinite(countRaw) && countRaw > 0 ? Math.floor(countRaw) : 1;
+		const width = parseNumber(params.width, undefined);
+		const height = parseNumber(params.height, undefined);
+		const size = Number.isFinite(width) && Number.isFinite(height) && width > 0 && height > 0
+			? `${Math.round(width)}x${Math.round(height)}`
+			: undefined;
+		const seed = parseNumber(params.seed, undefined);
+		const timeoutMs = parseNumber(params.timeout_ms, 120000);
+
+		// Enforce a hard timeout for the AI image request.
+		const controller = new AbortController();
+		const timeout = setTimeout(() => controller.abort(new Error("AI request timed out")), timeoutMs);
+
+		let imageResult;
+		try {
+			imageResult = await generateImage({
+				model: imageModel,
+				prompt,
+				n: count,
+				size,
+				seed,
+				abortSignal: controller.signal
+			});
+		}
+		finally {
+			clearTimeout(timeout);
+		}
+
+		const images = imageResult && Array.isArray(imageResult.images) ? imageResult.images : [];
+		if (!images.length) return fail("image", "No images were generated.");
+
+		const files = [];
+		for (let idx = 0; idx < images.length; idx++) {
+			const image = images[idx];
+			const ext = resolveImageExtension(image.mediaType);
+			const filename = `image-${idx + 1}.${ext}`;
+			const buffer = image.uint8Array || Buffer.from(image.base64, "base64");
+			await writeFile(filename, buffer);
+			files.push(filename);
+		}
+
+		return writeExit({ xy: 1, code: 0, files });
 	}
 
 	const model = provider(modelName);
@@ -191,7 +270,7 @@ function buildProvider(provider, apiKey, baseURL) {
 	const expectJson = String(params.expect_json || "").toLowerCase() === "true" || params.expect_json === true;
 	const timeoutMs = parseNumber(params.timeout_ms, 60000);
 
-	// Enforce a hard timeout for the AI request.
+	// Enforce a hard timeout for the AI text request.
 	const controller = new AbortController();
 	const timeout = setTimeout(() => controller.abort(new Error("AI request timed out")), timeoutMs);
 

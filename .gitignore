@@ -2,4 +2,6 @@ node_modules/
 downloads/
 work/
 agents/
+agents
 prompt.md
+test.sh
