@@ -7,10 +7,10 @@
 			"type": "plugin",
 			"data": {
 				"id": "pmk95r61ujs3byazh",
-				"title": "AI Prompt",
+				"title": "AI Generation",
 				"enabled": true,
 				"type": "event",
-				"command": "npx -y github:pixlcore/xyplug-ai#v1.0.6",
+				"command": "npx -y github:pixlcore/xyplug-ai#v1.0.7",
 				"script": "",
 				"kill": "parent",
 				"notes": "Send a prompt to any AI provider and return the response text, JSON or images.",

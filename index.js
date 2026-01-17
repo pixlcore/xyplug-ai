@@ -14,6 +14,9 @@ import { createXai } from "@ai-sdk/xai";
 
 globalThis.AI_SDK_LOG_WARNINGS = false;
 
+// map google's horrible env var name
+if (process.env.GOOGLE_API_KEY) process.env.GOOGLE_GENERATIVE_AI_API_KEY = process.env.GOOGLE_API_KEY;
+
 // Map provider names to their Vercel AI SDK factory functions.
 const PROVIDERS = {
 	anthropic: createAnthropic,
