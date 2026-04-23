@@ -37,7 +37,7 @@ The plugin uses a **Tool Select** menu to switch between two modes: **Text / JSO
 
 ### Text / JSON Generation
 
-- **AI Provider/Model**: Provider and model name in the form `provider/model` (e.g. `openai/gpt-5.1`, `anthropic/claude-3-5-sonnet`, `google/gemini-1.5-pro`). If you set **AI Base URL**, enter the model name only (no provider prefix).
+- **AI Provider/Model**: Provider and model name in the form `provider/model` (e.g. `openai/gpt-5.4`, `anthropic/claude-sonnet-4-5`, `google/gemini-2.5-pro`). If you set **AI Base URL**, enter the model name only (no provider prefix).
 - **AI Base URL**: Optional custom base URL for OpenAI-compatible endpoints (e.g. Ollama at `http://localhost:11434/v1`). When set, the plugin uses the local OpenAI-compatible provider and treats the model string as-is.
 - **Prompt**: The text prompt sent to the model.
 - **System Prompt**: Optional system prompt to include with the request.
@@ -48,7 +48,7 @@ The plugin uses a **Tool Select** menu to switch between two modes: **Text / JSO
 
 ### Image Generation
 
-- **AI Provider/Model**: Provider and image model name in the form `provider/model` (e.g. `openai/gpt-image-1`).
+- **AI Provider/Model**: Provider and image model name in the form `provider/model` (e.g. `openai/gpt-image-2`).
 - **AI Base URL**: Optional custom base URL for OpenAI-compatible endpoints.
 - **Prompt**: The text prompt sent to the image model.
 - **Image Count**: Number of images to generate.
@@ -71,7 +71,7 @@ Text mode example parameters:
 
 ```
 Tool Select: Text / JSON Generation
-AI Provider/Model: openai/gpt-5.1
+AI Provider/Model: openai/gpt-5.4
 Prompt: Write a haiku about automation.
 System Prompt: You are a helpful assistant.
 Temperature: 0.2
@@ -92,7 +92,7 @@ Image mode example parameters:
 
 ```
 Tool Select: Image Generation
-AI Provider/Model: openai/gpt-image-1
+AI Provider/Model: openai/gpt-image-2
 Prompt: A playful robot juggling oranges in a neon-lit kitchen.
 Image Count: 2
 Image Width: 1024
@@ -109,7 +109,7 @@ Example input file for text generation:
 {
 	"params": {
 		"tool": "text",
-		"model": "openai/gpt-5.1",
+		"model": "openai/gpt-5.4",
 		"prompt": "Return JSON with a greeting and a timestamp.",
 		"expect_json": true
 	}
@@ -122,7 +122,7 @@ Example input file for image generation:
 {
 	"params": {
 		"tool": "image",
-		"model": "openai/gpt-image-1",
+		"model": "openai/gpt-image-2",
 		"prompt": "A corgi riding a skateboard.",
 		"width": 1024,
 		"height": 1024

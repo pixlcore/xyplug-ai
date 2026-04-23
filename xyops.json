@@ -10,7 +10,7 @@
 				"title": "AI Generation",
 				"enabled": true,
 				"type": "event",
-				"command": "npx -y @pixlcore/xyplug-ai@1.0.8",
+				"command": "npx -y @pixlcore/xyplug-ai@1.0.9",
 				"script": "",
 				"kill": "parent",
 				"notes": "Send a prompt to any AI provider and return the response text, JSON or images.",
@@ -34,7 +34,7 @@
 											"type": "text",
 											"caption": "Enter the AI provider and model name, separated by a slash.",
 											"locked": false,
-											"value": "openai/gpt-5.1",
+											"value": "openai/gpt-5.4",
 											"variant": "text",
 											"required": true
 										},
@@ -136,7 +136,7 @@
 											"type": "text",
 											"caption": "Enter the AI provider and image model name, separated by a slash.",
 											"locked": false,
-											"value": "openai/gpt-image-1",
+											"value": "openai/gpt-image-2",
 											"variant": "text",
 											"required": true
 										},
