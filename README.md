@@ -5,8 +5,8 @@ An AI generation event plugin for the [xyOps Workflow Automation System](https:/
 
 ## Requirements
 
-- **Node.js + npx**
-	- Required to run the plugin via `npx`.
+- **Node.js 22+ + npx**
+	- Required to run the plugin via `npx`. Version 1.0.10 and newer use AI SDK 7, which requires Node.js 22 or later.
 - **git**
 	- Required if you run the plugin via the GitHub `npx` install path.
 - **AI Provider Credentials**
@@ -37,7 +37,7 @@ The plugin uses a **Tool Select** menu to switch between two modes: **Text / JSO
 
 ### Text / JSON Generation
 
-- **AI Provider/Model**: Provider and model name in the form `provider/model` (e.g. `openai/gpt-5.4`, `anthropic/claude-sonnet-4-5`, `google/gemini-2.5-pro`). If you set **AI Base URL**, enter the model name only (no provider prefix).
+- **AI Provider/Model**: Provider and model name in the form `provider/model` (e.g. `openai/gpt-5.5`, `anthropic/claude-sonnet-4-5`, `google/gemini-2.5-pro`). If you set **AI Base URL**, enter the model name only (no provider prefix).
 - **AI Base URL**: Optional custom base URL for OpenAI-compatible endpoints (e.g. Ollama at `http://localhost:11434/v1`). When set, the plugin uses the local OpenAI-compatible provider and treats the model string as-is.
 - **Prompt**: The text prompt sent to the model.
 - **System Prompt**: Optional system prompt to include with the request.
@@ -71,7 +71,7 @@ Text mode example parameters:
 
 ```
 Tool Select: Text / JSON Generation
-AI Provider/Model: openai/gpt-5.4
+AI Provider/Model: openai/gpt-5.5
 Prompt: Write a haiku about automation.
 System Prompt: You are a helpful assistant.
 Temperature: 0.2
@@ -109,7 +109,7 @@ Example input file for text generation:
 {
 	"params": {
 		"tool": "text",
-		"model": "openai/gpt-5.4",
+		"model": "openai/gpt-5.5",
 		"prompt": "Return JSON with a greeting and a timestamp.",
 		"expect_json": true
 	}

@@ -14,6 +14,8 @@ import { createXai } from "@ai-sdk/xai";
 
 globalThis.AI_SDK_LOG_WARNINGS = false;
 
+const EXIT_SIGNAL = Symbol("exit");
+
 // map google's horrible env var name
 if (process.env.GOOGLE_API_KEY) process.env.GOOGLE_GENERATIVE_AI_API_KEY = process.env.GOOGLE_API_KEY;
 
@@ -53,7 +55,8 @@ function writeExit(payload) {
 
 // Emit an error response and exit.
 function fail(code, description) {
-	return writeExit({ xy: 1, code, description });
+	writeExit({ xy: 1, code, description });
+	throw EXIT_SIGNAL;
 }
 
 // Read and parse the job payload from STDIN.
@@ -266,7 +269,7 @@ function resolveImageExtension(mediaType) {
 
 	const model = provider(modelName);
 	const temperature = parseNumber(params.temperature, undefined);
-	const maxTokens = parseNumber(params.max_tokens, undefined);
+	const maxOutputTokens = parseNumber(params.max_tokens, undefined);
 	const topP = parseNumber(params.top_p, undefined);
 	const stopSequences = parseStopSequences(params.stop_sequences);
 	const system = params.system_prompt ? String(params.system_prompt) : undefined;
@@ -285,7 +288,7 @@ function resolveImageExtension(mediaType) {
 			prompt,
 			system,
 			temperature,
-			maxTokens,
+			maxOutputTokens,
 			topP,
 			stopSequences,
 			abortSignal: controller.signal
@@ -307,8 +310,10 @@ function resolveImageExtension(mediaType) {
 	// Return parsed JSON if available, otherwise return plain text.
 	const data = jsonResult.parsed ? jsonResult.parsed : { text };
 	writeExit({ xy: 1, code: 0, data });
-	
+
 })().catch((err) => {
+	if (err === EXIT_SIGNAL) return;
+
 	// Catch-all handler for unexpected errors.
 	return fail("error", err && err.message ? err.message : "Unknown error");
 });

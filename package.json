@@ -1,11 +1,14 @@
 {
 	"name": "@pixlcore/xyplug-ai",
-	"version": "1.0.9",
+	"version": "1.0.10",
 	"description": "An AI generation plugin for the xyOps workflow automation system.",
 	"author": "Joseph Huckaby <jhuckaby@pixlcore.com>",
 	"homepage": "https://github.com/pixlcore/xyplug-ai",
 	"license": "MIT",
 	"type": "module",
+	"engines": {
+		"node": ">=22"
+	},
 	"bin": {
 		"xyplug-ai": "index.js"
 	},
@@ -23,16 +26,16 @@
 		"llm"
 	],
 	"dependencies": {
-		"ai": "^6.0.27",
-		"@ai-sdk/anthropic": "^3.0.9",
-		"@ai-sdk/cohere": "^3.0.4",
-		"@ai-sdk/deepseek": "^2.0.4",
-		"@ai-sdk/google": "^3.0.6",
-		"@ai-sdk/groq": "^3.0.4",
-		"@ai-sdk/mistral": "^3.0.5",
-		"@ai-sdk/openai": "^3.0.7",
-		"@ai-sdk/openai-compatible": "^2.0.4",
-		"@ai-sdk/xai": "^3.0.13"
+		"@ai-sdk/anthropic": "^4.0.1",
+		"@ai-sdk/cohere": "^4.0.1",
+		"@ai-sdk/deepseek": "^3.0.1",
+		"@ai-sdk/google": "^4.0.2",
+		"@ai-sdk/groq": "^4.0.1",
+		"@ai-sdk/mistral": "^4.0.1",
+		"@ai-sdk/openai": "^4.0.2",
+		"@ai-sdk/openai-compatible": "^3.0.1",
+		"@ai-sdk/xai": "^4.0.2",
+		"ai": "^7.0.4"
 	},
 	"publishConfig": {
 		"access": "public"
